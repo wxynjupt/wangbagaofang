@@ -94,13 +94,13 @@ def internal_server_error(e):
 
 @app.route('/index')
 def index():
-    
-    return render_template('index.html')
+    month_client_count = Client_Info.query.count()
+    all_client_count = Client_Info.query.count()
+    isnot_config_count = Client_Info.query.count()
+    attack_count = Client_Info.query.count()
 
+    return render_template('index.html',all_client_count=all_client_count,month_client_count=month_client_count,isnot_config_count=isnot_config_count,attack_count=attack_count)
 
-@app.route('/user/<name>')
-def user(name):
-    return render_template('user.html', name=name)
 
 @app.route('/',methods=['POST','GET'])
 def login():
