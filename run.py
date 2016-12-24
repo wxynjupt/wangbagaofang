@@ -7,6 +7,9 @@ from flask_wtf import Form
 from wtforms import StringField, SubmitField, RadioField,FileField,SelectField
 from wtforms.validators import Required
 from flask_sqlalchemy import SQLAlchemy
+from flask.ext.moment import Moment
+from datetime import date
+
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -18,7 +21,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] =\
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 
 db = SQLAlchemy(app)
-
+moment = Moment(app)
 manager = Manager(app)
 bootstrap = Bootstrap(app)
 
@@ -94,7 +97,7 @@ def internal_server_error(e):
 
 @app.route('/index')
 def index():
-    month_client_count = Client_Info.query.count()
+    month_client_count = 100
     all_client_count = Client_Info.query.count()
     isnot_config_count = Client_Info.query.count()
     attack_count = Client_Info.query.count()
@@ -130,7 +133,11 @@ def adduser():
         adduserform.client_port.data = ''
         adduserform.client_aera.data = ''
         adduserform.client_application.data = ''
-    return render_template('adduser.html')
+        print clientip
+        client_info = Client_Info(clientname = clientname,ip_address = clientip,area = clientaera,bandwidth = clientbandwidth,is_config = 0,attack_num = 0,time = datetime.datetime.now())
+        db.session.add(client_info)
+        db.session.commit()
+    return render_template('adduser.html',adduserform = adduserform)
 
 
 @app.route('/editconfig')
